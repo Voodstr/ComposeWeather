@@ -167,7 +167,7 @@ fun PreviewAppDrawer() {
                 currentRoute = MainDestinations.HOME_ROUTE,
                 navigateToHome = {},
                 navigateToInterests = {},
-                closeDrawer = { }
+                closeDrawer = {}
             )
         }
     }

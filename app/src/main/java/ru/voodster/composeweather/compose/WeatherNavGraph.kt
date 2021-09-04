@@ -1,6 +1,7 @@
 package ru.voodster.composeweather.compose
 
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -9,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import ru.voodster.composeweather.App
 import ru.voodster.composeweather.WeatherRepository
@@ -32,9 +34,15 @@ fun WeatherNavGraph(
     val actions = remember(navController) { MainActions(navController) } // TODO ?????
     val coroutineScope = rememberCoroutineScope() // область процесса
     val openDrawer: () -> Unit = { coroutineScope.launch { scaffoldState.drawerState.open() } }
+
     var currentWeather = WeatherModel(1630673409,0,60,0,755,200)
+
+
     appContainer.getCurrentWeather(object: WeatherRepository.GetWeatherCallback{
         override fun onError(error: String?) {
+            coroutineScope.launch {
+                scaffoldState.snackbarHostState.showSnackbar(error?:"Unknown error",duration = SnackbarDuration.Long)
+            }
         }
         override fun onSuccess(result: WeatherModel) {
             currentWeather = result

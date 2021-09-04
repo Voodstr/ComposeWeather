@@ -11,16 +11,12 @@ import ru.voodster.composeweather.weatherapi.WeatherModel
 
 class MainActivity : ComponentActivity() {
     
-    val repoComponent: WeatherRepoComponent = DaggerWeatherRepoComponent.builder().build()
+    private val repoComponent: WeatherRepoComponent = DaggerWeatherRepoComponent.builder().build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ComposeWeatherTheme {
-                Scaffold() {
-                    WeatherApp(appContainer = repoComponent.repos() )
-                }
-            }
+            WeatherApp(appContainer = repoComponent.repos() )
         }
     }
 }

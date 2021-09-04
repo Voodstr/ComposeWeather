@@ -4,6 +4,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,10 +17,58 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.voodster.composeweather.ui.theme.*
 import ru.voodster.composeweather.weatherapi.WeatherModel
 import java.text.SimpleDateFormat
 import java.util.*
+
+
+
+/**
+ * Full screen circular progress indicator
+ */
+@Composable
+private fun FullScreenLoading() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center)
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+
+
+/**
+ * Display an initial empty state or swipe to refresh content.
+ *
+ * @param empty (state) when true, display [emptyContent]
+ * @param emptyContent (slot) the content to display for the empty state
+ * @param loading (state) when true, display a loading spinner over [content]
+ * @param onRefresh (event) event to request refresh
+ * @param content (slot) the main content to show
+ */
+@Composable
+private fun LoadingContent(
+    empty: Boolean,
+    emptyContent: @Composable () -> Unit,
+    loading: Boolean,
+    onRefresh: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    if (empty) {
+        emptyContent()
+    } else {
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(loading),
+            onRefresh = onRefresh,
+            content = content,
+        )
+    }
+}
 
 @Composable
     fun Weather(data: WeatherModel) {
@@ -46,9 +96,9 @@ fun temp(temp:Double){
             .fillMaxWidth()
             .wrapContentSize(Alignment.Center)) {
             Text(modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,fontSize = 100.sp,
+                textAlign = TextAlign.Center,fontSize = 80.sp,
                 color = secondaryTextColor,
-                text = "${temp}° C")
+                text = "\uD83C\uDF21${temp}°C")
         }
     }
 }
