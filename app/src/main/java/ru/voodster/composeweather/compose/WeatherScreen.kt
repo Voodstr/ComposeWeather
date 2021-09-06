@@ -80,7 +80,7 @@ private fun LoadingContent(
             Arrangement.SpaceEvenly
         ) {
             date(date =data.date )
-            temp(temp = data.temp.toDouble().div(10.0))
+            temp(temp = data.temp)
             pressure(pressure = data.press)
             humidity(humidity = data.hum)
         }
@@ -88,7 +88,8 @@ private fun LoadingContent(
     }
 
 @Composable
-fun temp(temp:Double){
+fun temp(temp:Int){
+    val formatedTemp = temp.toDouble().div(10.0)
     Surface(shape = RoundedCornerShape(50.dp),
         color = secondaryDarkColor,
         border = BorderStroke(1.dp, primaryDarkColor)) {
@@ -161,7 +162,7 @@ fun humidity(humidity : Int){
             .padding(10.dp),
         Arrangement.SpaceEvenly
     ) {
-            temp(temp = 20.0)
+            temp(temp = 200)
             date(date =1630673409 )
             pressure(pressure = 755)
         }
