@@ -4,10 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,21 +68,36 @@ private fun LoadingContent(
 }
 
 @Composable
-    fun Weather(data: WeatherModel) {
-    Surface(color = primaryColor) {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(10.dp),
-            Arrangement.SpaceEvenly
-        ) {
-            date(date =data.date )
-            temp(temp = data.temp)
-            pressure(pressure = data.press)
-            humidity(humidity = data.hum)
+fun emptyScreen(){
+    Text(text = "Just started. Wait please")
+}
+
+
+@Composable
+fun Content(data: WeatherModel){
+    Weather(data = data)
+}
+
+@Composable
+fun Weather(data: WeatherModel) {
+    Scaffold(
+    ) {
+        Surface(color = primaryDarkColor,
+            modifier = Modifier.padding(bottom = it.calculateBottomPadding())) {
+            Column(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxHeight(),
+                Arrangement.SpaceEvenly
+            ) {
+                date(date =data.date )
+                temp(temp = data.temp)
+                pressure(pressure = data.press)
+                humidity(humidity = data.hum)
+            }
         }
     }
-    }
+}
 
 @Composable
 fun temp(temp:Int){
@@ -99,7 +111,7 @@ fun temp(temp:Int){
             Text(modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,fontSize = 80.sp,
                 color = secondaryTextColor,
-                text = "\uD83C\uDF21${temp}°C")
+                text = "${formatedTemp}°C")
         }
     }
 }
@@ -111,7 +123,7 @@ fun date(date:Int){
 
     Surface(shape = RoundedCornerShape(50.dp),
         color = secondaryDarkColor,
-        border = BorderStroke(1.dp, primaryDarkColor)) {
+        border = BorderStroke(1.dp, primaryDarkColor),) {
         Column(modifier = Modifier
             .fillMaxWidth()
             .wrapContentSize(Alignment.Center)) {

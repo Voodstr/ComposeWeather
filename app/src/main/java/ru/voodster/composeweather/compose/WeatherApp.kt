@@ -1,28 +1,38 @@
 package ru.voodster.composeweather
 
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
+import androidx.annotation.StringRes
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import ru.voodster.composeweather.ui.theme.ComposeWeatherTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
-import ru.voodster.composeweather.compose.AppDrawer
 import ru.voodster.composeweather.compose.MainDestinations
 import ru.voodster.composeweather.compose.WeatherNavGraph
 
+const val KEY_ROUTE = "android-support-nav:controller:route"
+
 @Composable
 fun WeatherApp(
-    appContainer: WeatherRepository
+    appContainer: WeatherRepository?
 ) {
     ComposeWeatherTheme() { //
-        ProvideWindowInsets { // обьявляем обработку вставок типа клавиатуры или navBar
+        ProvideWindowInsets(windowInsetsAnimationsEnabled = true) { // обьявляем обработку вставок типа клавиатуры или navBar
             val systemUiController = rememberSystemUiController() // Контроллер системного UI -
                                                         // теже клавиатура navBar statusBar
             SideEffect {
@@ -42,25 +52,58 @@ fun WeatherApp(
             val currentRoute = navBackStackEntry?.destination?.route ?: MainDestinations.HOME_ROUTE
             // текущий путь, если его нет, то домашний экран
 
+            val bottomNavigationItems = listOf(BottomNavigationScreens.Home,BottomNavigationScreens.Table,BottomNavigationScreens.Charts)
+
             Scaffold(
                 scaffoldState = scaffoldState,
-                drawerContent = {
-                    AppDrawer(
-                        currentRoute = currentRoute,
-                        navigateToHome = { navController.navigate(MainDestinations.HOME_ROUTE) },
-                        navigateToInterests = { navController.navigate(MainDestinations.INTERESTS_ROUTE) },
-                        closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } }
-                    )
-                }
+                bottomBar = {bottomNavigationBar(navController, bottomNavigationItems)}
             )
 
             {
                 WeatherNavGraph(
                     appContainer = appContainer,
                     navController = navController,
-                    scaffoldState = scaffoldState
+                    scaffoldState = scaffoldState,
                 )
             }
         }
     }
+
 }
+
+@Composable
+fun bottomNavigationBar(navController: NavHostController, items: List<BottomNavigationScreens>){
+    BottomNavigation(){
+        val currentRoute = currentRoute(navController)
+        items.forEach { screen ->
+            BottomNavigationItem(
+                icon = { Icon(screen.icon,"contentDescription") },
+                label = { Text(stringResource(id = screen.resourceId)) },
+                selected = currentRoute == screen.route,
+                alwaysShowLabel = false, // This hides the title for the unselected items
+                onClick = {
+                    // This if check gives us a "singleTop" behavior where we do not create a
+                    // second instance of the composable if we are already on that destination
+                    if (currentRoute != screen.route) {
+                        navController.navigate(screen.route)
+                    }
+                }
+            )
+        }
+    }
+}
+
+
+sealed class BottomNavigationScreens(val route: String, @StringRes val resourceId: Int, val icon: ImageVector ) {
+    object Home : BottomNavigationScreens("Home", R.string.Indication, Icons.Filled.Home)
+    object Table : BottomNavigationScreens("Table", R.string.Table, Icons.Filled.List)
+    object Charts : BottomNavigationScreens("Chart", R.string.Chart, Icons.Filled.DateRange)
+}
+
+
+@Composable
+private fun currentRoute(navController: NavHostController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
+}
+

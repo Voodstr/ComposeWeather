@@ -18,15 +18,14 @@ import ru.voodster.composeweather.weatherapi.WeatherModel
 
 object MainDestinations {
     const val HOME_ROUTE = "home"
-    const val INTERESTS_ROUTE = "interests"
-    const val ARTICLE_ROUTE = "post"
-    const val ARTICLE_ID_KEY = "postId"
+    const val TABLE_ROUTE = "table"
+    const val CHART_ROUTE = "chart"
 }
 
 
 @Composable
 fun WeatherNavGraph(
-    appContainer: WeatherRepository,  // DI интерфейс, который должен выдавать обьект-репозиторий
+    appContainer: WeatherRepository?,  // DI интерфейс, который должен выдавать обьект-репозиторий
     navController: NavHostController = rememberNavController(), // контроллер навигации
     scaffoldState: ScaffoldState = rememberScaffoldState(), // состояние экрана
     startDestination: String = MainDestinations.HOME_ROUTE // начальная точка UI
@@ -38,7 +37,7 @@ fun WeatherNavGraph(
     var currentWeather = WeatherModel(1630673409,0,60,0,755,200)
 
 
-    appContainer.getCurrentWeather(object: WeatherRepository.GetWeatherCallback{
+    appContainer?.getCurrentWeather(object: WeatherRepository.GetWeatherCallback{
         override fun onError(error: String?) {
             coroutineScope.launch {
                 scaffoldState.snackbarHostState.showSnackbar(error?:"Unknown error",duration = SnackbarDuration.Long)
@@ -56,6 +55,12 @@ fun WeatherNavGraph(
         composable(MainDestinations.HOME_ROUTE) { // что выдавать в при переходе на домашнюю страницу
             Weather(data =  currentWeather)
         }// таких штук можно добавить сколько угодно (не забуду добавить им названия 'MainDestinations')
+        composable(MainDestinations.TABLE_ROUTE) { // что выдавать в при переходе на домашнюю страницу
+            Weather(data =  currentWeather)
+        }
+        composable(MainDestinations.CHART_ROUTE) { // что выдавать в при переходе на домашнюю страницу
+            Weather(data =  currentWeather)
+        }
     }
 }
 
