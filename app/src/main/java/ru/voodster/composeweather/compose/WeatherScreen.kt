@@ -82,8 +82,7 @@ fun Content(data: WeatherModel){
 fun Weather(data: WeatherModel) {
     Scaffold(
     ) {
-        Surface(color = primaryDarkColor,
-            modifier = Modifier.padding(bottom = it.calculateBottomPadding())) {
+        Surface(color = primaryDarkColor) {
             Column(
                 modifier = Modifier
                     .padding(10.dp)

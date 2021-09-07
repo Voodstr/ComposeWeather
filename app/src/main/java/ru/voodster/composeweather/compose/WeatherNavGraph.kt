@@ -1,11 +1,14 @@
 package ru.voodster.composeweather.compose
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -50,16 +53,17 @@ fun WeatherNavGraph(
 
     NavHost(                   // navHost -- сама вьюшка, в которой меняются окна и есть все тулбары
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        modifier = Modifier.padding(bottom = 50.dp) // отступ для bottomNavigationBar
     ) {
         composable(MainDestinations.HOME_ROUTE) { // что выдавать в при переходе на домашнюю страницу
             Weather(data =  currentWeather)
         }// таких штук можно добавить сколько угодно (не забуду добавить им названия 'MainDestinations')
         composable(MainDestinations.TABLE_ROUTE) { // что выдавать в при переходе на домашнюю страницу
-            Weather(data =  currentWeather)
+            Weather(data =  WeatherModel(0,0,0,0,0,0))
         }
         composable(MainDestinations.CHART_ROUTE) { // что выдавать в при переходе на домашнюю страницу
-            Weather(data =  currentWeather)
+            Weather(data =  WeatherModel(5,5,5,5,5,5))
         }
     }
 }
