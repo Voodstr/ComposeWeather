@@ -1,66 +1,141 @@
 package ru.voodster.composeweather
 
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
+import androidx.navigation.NavGraph
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
-import ru.voodster.composeweather.ui.theme.ComposeWeatherTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
-import ru.voodster.composeweather.compose.AppDrawer
-import ru.voodster.composeweather.compose.MainDestinations
+
 import ru.voodster.composeweather.compose.WeatherNavGraph
+import ru.voodster.composeweather.ui.theme.*
+
+
+
+private val NavGraph.startDestination: NavDestination?
+    get() = findNode(startDestinationId)
+
+
+private tailrec fun findStartDestination(graph: NavDestination): NavDestination {
+    return if (graph is NavGraph) findStartDestination(graph.startDestination!!) else graph
+}
+
 
 @Composable
 fun WeatherApp(
     appContainer: WeatherRepository
 ) {
     ComposeWeatherTheme() { //
-        ProvideWindowInsets { // обьявляем обработку вставок типа клавиатуры или navBar
+        ProvideWindowInsets(windowInsetsAnimationsEnabled = true) { // обьявляем обработку вставок типа клавиатуры или navBar
             val systemUiController = rememberSystemUiController() // Контроллер системного UI -
                                                         // теже клавиатура navBar statusBar
             SideEffect {
-                systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
+                systemUiController.isStatusBarVisible = false
+                //systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
             }
-
             val navController = rememberNavController() // Контроллер навигации
-            val coroutineScope = rememberCoroutineScope() // Область процесса в котором живет UI
+            //val coroutineScope = rememberCoroutineScope() // Область процесса в котором живет UI
             // This top level scaffold contains the app drawer, which needs to be accessible
             // from multiple screens. An event to open the drawer is passed down to each
             // screen that needs it.
             val scaffoldState = rememberScaffoldState() // Состояние основного окна
-
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            // сохраняем последний экран, который покажется если нажать назад
-
-            val currentRoute = navBackStackEntry?.destination?.route ?: MainDestinations.HOME_ROUTE
-            // текущий путь, если его нет, то домашний экран
+            val bottomNavigationItems = listOf(
+                BottomNavigationScreens.CURRENT,
+                BottomNavigationScreens.TABLE,
+                BottomNavigationScreens.CHART)
 
             Scaffold(
                 scaffoldState = scaffoldState,
-                drawerContent = {
-                    AppDrawer(
-                        currentRoute = currentRoute,
-                        navigateToHome = { navController.navigate(MainDestinations.HOME_ROUTE) },
-                        navigateToInterests = { navController.navigate(MainDestinations.INTERESTS_ROUTE) },
-                        closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } }
-                    )
-                }
+                bottomBar = {BottomNavigationBar(navController, bottomNavigationItems)}
             )
 
-            {
+            {innerPadding->
                 WeatherNavGraph(
                     appContainer = appContainer,
                     navController = navController,
-                    scaffoldState = scaffoldState
+                    scaffoldState = scaffoldState,innerPadding = innerPadding
                 )
             }
         }
     }
+
 }
+
+@Composable
+fun BottomNavigationBar(navController: NavHostController, items: List<BottomNavigationScreens>){
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val sections = remember { BottomNavigationScreens.values() }
+    val routes = remember { sections.map { it.route } }
+
+    if (currentRoute in routes) {
+        val currentSection = sections.first { it.route == currentRoute }
+        BottomAppBar(backgroundColor = primaryLightColor,
+            contentColor = primaryTextColor,
+            elevation = 4.dp
+        ) {
+            items.forEach{section ->
+                val selected = section == currentSection
+                val tint by animateColorAsState(
+                    if (selected) {
+                        primaryTextColor
+                    } else {
+                        primaryDarkColor
+                    }
+                )
+                BottomNavigationItem(
+                    icon = { Icon(section.icon,"contentDescription") },
+                    label = { Text(stringResource(id = section.resourceId)) },
+                    selected = selected,
+                    selectedContentColor = primaryTextColor ,
+                    unselectedContentColor = primaryDarkColor,
+                    alwaysShowLabel = true, // This hides the title for the unselected items
+                    onClick = {
+                        // This if check gives us a "singleTop" behavior where we do not create a
+                        // second instance of the composable if we are already on that destination
+                        if (currentRoute != section.route) {
+                            navController.navigate(section.route){
+                                launchSingleTop = true
+                                restoreState = true
+                                popUpTo(findStartDestination(navController.graph).id) {
+                                    saveState = true
+                                }
+                            }
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+}
+
+
+
+enum class BottomNavigationScreens(val route: String, @StringRes val resourceId: Int, val icon: ImageVector ) {
+    CURRENT("home/current", R.string.Indication, Icons.Filled.Home),
+    TABLE("home/table", R.string.Table, Icons.Filled.List),
+    CHART("home/chart", R.string.Chart, Icons.Filled.DateRange)
+}
+
+
+
