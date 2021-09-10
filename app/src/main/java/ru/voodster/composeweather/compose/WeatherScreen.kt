@@ -1,9 +1,11 @@
 package ru.voodster.composeweather.compose
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -13,12 +15,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshState
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.delay
 import ru.voodster.composeweather.WeatherRepository
+import ru.voodster.composeweather.WeatherViewModel
 import ru.voodster.composeweather.ui.theme.*
 import ru.voodster.composeweather.weatherapi.WeatherModel
 import java.text.SimpleDateFormat
 import java.util.*
+
+
 
 
 
@@ -76,69 +83,53 @@ fun emptyScreen(){
 
 }
 
+
 @Composable
-fun Content(data: WeatherModel){
+fun WeatherScreen(data: WeatherModel?, refreshState: SwipeRefreshState, onRefresh: () -> Unit) {
+
+        Surface(
+            color = primaryDarkColor, modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
+            SwipeRefresh(refreshState, onRefresh = onRefresh) {
+                WeatherList(data = data?:WeatherModel(9,9,9,9,9,9))
+            }
+        }
+}
+@Composable
+fun ContentOrError(){
+    val refreshState by remember { mutableStateOf(false)}
+
+}
+
+@Composable
+fun WeatherList(data: WeatherModel){
     val fTemp = "${data.temp.toDouble().div(10.0)}°C"
     val sdf = SimpleDateFormat("dd/MM HH:mm", Locale.ROOT)
     val fDate = sdf.format(Date(data.date.toLong().times(1000)))
     val fPress = "${data.press} mm"
     val fHum = "${data.hum}%"
-    Scaffold(
-    ) {
-        Surface(color = primaryColor) {
-            Column(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxHeight(),
-                Arrangement.SpaceEvenly
-            ) {
-                TextOnSurface(text = fDate, textSize = 50.sp)
-                TextOnSurface(text = fTemp, textSize = 70.sp)
-                TextOnSurface(text = fPress, textSize = 50.sp)
-                TextOnSurface(text = fHum, textSize = 50.sp)
-            }
-        }
+    LazyColumn(verticalArrangement = Arrangement.SpaceEvenly,modifier = Modifier.fillMaxHeight()){
+        item{TextOnSurface(text = fDate, textSize = 50.sp)}
+        item{TextOnSurface(text = fTemp, textSize = 70.sp)}
+        item{TextOnSurface(text = fPress, textSize = 50.sp)}
+        item{TextOnSurface(text = fHum, textSize = 50.sp)}
     }
 }
-
 
 
 @Composable
 fun TextOnSurface(text:String,textSize:TextUnit){
     Surface(shape = RoundedCornerShape(50.dp),
         color = secondaryColor) {
-            Text(modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.Center),
-                textAlign = TextAlign.Center,
-                fontSize = textSize,
-                color = secondaryTextColor,
-                text = text)
-        }
-}
-
-@Composable
-fun WeatherScreen(weatherRepository: WeatherRepository) {
-    var initialLoad = true
-    var weatherError = "Unknown Error"
-    var currentWeather = WeatherModel(0,0,0,0,0,0)
-    var loading = false
-    val load = rememberSwipeRefreshState(loading)
-    
-    SwipeRefresh(state = load, onRefresh = { 
-        loading = true
-        weatherRepository.getCurrentWeather(object : WeatherRepository.GetWeatherCallback {
-            override fun onSuccess(result: WeatherModel) {
-                currentWeather = result
-                loading = false
-            }
-            override fun onError(error: String?) {
-                weatherError = error ?: "Unknown error"
-                loading = false
-            }
-        })
-    }) {
-        Content(data = currentWeather)
+        Text(modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.Center),
+            textAlign = TextAlign.Center,
+            fontSize = textSize,
+            color = secondaryTextColor,
+            text = text)
     }
 }
 
@@ -146,6 +137,6 @@ fun WeatherScreen(weatherRepository: WeatherRepository) {
     @Composable
     fun DefaultPreview() {
         ComposeWeatherTheme {
-            Content(data = WeatherModel(1630673409,0,60,0,755,200))
+            WeatherList(data = WeatherModel(0,0,0,0,0,0))
         }
     }

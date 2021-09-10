@@ -1,6 +1,8 @@
 package ru.voodster.composeweather
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,9 +13,9 @@ import ru.voodster.composeweather.weatherapi.WeatherModel
 import javax.inject.Singleton
 
 
-/*
+
 class WeatherViewModel : ViewModel() {
-    private val viewModelComponent=DaggerViewModelComponent.builder().build()
+    private val viewModelComponent=DaggerWeatherRepoComponent.builder().build()
     private val weatherRepository = viewModelComponent.repos()
 
     init {
@@ -24,6 +26,10 @@ class WeatherViewModel : ViewModel() {
     val currentWeather : LiveData<WeatherModel>
         get() = currentWeatherLiveData
 
+    var wetherNow = mutableStateOf(WeatherModel(0,0,0,0,0,0))
+        private set
+
+    var isRefreshing = false
 
     private val tableWeatherLiveData = MutableLiveData<List<WeatherModel>>()
     val tableWeather : LiveData<List<WeatherModel>>
@@ -32,13 +38,15 @@ class WeatherViewModel : ViewModel() {
     val errorMsg = SingleLiveEvent<String>()
 
     fun getCurrentWeather(){
+        isRefreshing = true
         weatherRepository.getCurrentWeather(object: WeatherRepository.GetWeatherCallback{
             override fun onError(error: String?) {
                 errorMsg.postValue(error?:"Unknown Error")
+                isRefreshing = false
             }
-
             override fun onSuccess(result: WeatherModel) {
                 currentWeatherLiveData.postValue(result)
+                isRefreshing = false
             }
         })
     }
@@ -60,5 +68,3 @@ class WeatherViewModel : ViewModel() {
 
 }
 
-
- */

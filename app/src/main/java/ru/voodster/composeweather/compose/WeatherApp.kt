@@ -2,19 +2,14 @@ package ru.voodster.composeweather
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph
@@ -40,7 +35,7 @@ private tailrec fun findStartDestination(graph: NavDestination): NavDestination 
 
 @Composable
 fun WeatherApp(
-    appContainer: WeatherRepository
+    appContainer: WeatherViewModel
 ) {
     ComposeWeatherTheme() { //
         ProvideWindowInsets(windowInsetsAnimationsEnabled = true) { // обьявляем обработку вставок типа клавиатуры или navBar
@@ -51,7 +46,8 @@ fun WeatherApp(
                 //systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
             }
             val navController = rememberNavController() // Контроллер навигации
-            //val coroutineScope = rememberCoroutineScope() // Область процесса в котором живет UI
+            val coroutineScope = rememberCoroutineScope() // Область процесса в котором живет UI
+
             // This top level scaffold contains the app drawer, which needs to be accessible
             // from multiple screens. An event to open the drawer is passed down to each
             // screen that needs it.
@@ -68,7 +64,7 @@ fun WeatherApp(
 
             {innerPadding->
                 WeatherNavGraph(
-                    appContainer = appContainer,
+                    viewmodel = appContainer,
                     navController = navController,
                     scaffoldState = scaffoldState,innerPadding = innerPadding
                 )

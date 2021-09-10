@@ -2,22 +2,19 @@ package ru.voodster.composeweather.compose
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.launch
-import ru.voodster.composeweather.WeatherRepository
-import ru.voodster.composeweather.weatherapi.WeatherModel
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import ru.voodster.composeweather.WeatherViewModel
 
 object MainDestinations {
     const val HOME_ROUTE = "home/current"
@@ -28,12 +25,16 @@ object MainDestinations {
 
 @Composable
 fun WeatherNavGraph(innerPadding:PaddingValues,
-                    appContainer: WeatherRepository,  // DI интерфейс, который должен выдавать обьект-репозиторий
+                    viewmodel: WeatherViewModel,
                     navController: NavHostController = rememberNavController(), // контроллер навигации
                     scaffoldState: ScaffoldState = rememberScaffoldState(), // состояние экрана
                     startDestination: String = MainDestinations.HOME_ROUTE // начальная точка UI
 ) {
     val coroutineScope = rememberCoroutineScope() // область процесса
+
+    val currentWeather = viewmodel.currentWeather.observeAsState()
+    val refreshState = rememberSwipeRefreshState(isRefreshing = viewmodel.isRefreshing)
+
 
     NavHost(                   // navHost -- сама вьюшка, в которой меняются окна и есть все тулбары
         navController = navController,
@@ -41,7 +42,9 @@ fun WeatherNavGraph(innerPadding:PaddingValues,
         modifier = Modifier.padding(innerPadding) // отступ для bottomNavigationBar
     ) {
         composable(MainDestinations.HOME_ROUTE) { // что выдавать в при переходе на домашнюю страницу
-            WeatherScreen(weatherRepository = appContainer)
+            WeatherScreen(currentWeather.value,refreshState) {
+                viewmodel.getCurrentWeather()
+            }
         }// таких штук можно добавить сколько угодно (не забуду добавить им названия 'MainDestinations')
         composable(MainDestinations.TABLE_ROUTE) { // что выдавать в при переходе на домашнюю страницу
             Box(modifier = Modifier
