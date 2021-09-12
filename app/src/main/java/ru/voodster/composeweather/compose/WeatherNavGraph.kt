@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -42,9 +41,7 @@ fun WeatherNavGraph(innerPadding:PaddingValues,
         modifier = Modifier.padding(innerPadding) // отступ для bottomNavigationBar
     ) {
         composable(MainDestinations.HOME_ROUTE) { // что выдавать в при переходе на домашнюю страницу
-            WeatherScreen(currentWeather.value,refreshState) {
-                viewmodel.getCurrentWeather()
-            }
+            WeatherScreen(viewModel = viewmodel)
         }// таких штук можно добавить сколько угодно (не забуду добавить им названия 'MainDestinations')
         composable(MainDestinations.TABLE_ROUTE) { // что выдавать в при переходе на домашнюю страницу
             Box(modifier = Modifier

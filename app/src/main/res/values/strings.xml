@@ -3,4 +3,7 @@
     <string name="Indication">Home</string>
     <string name="Table">Table</string>
     <string name="Chart">Chart</string>
+    <string name="weather_tap_to_load_content">Tap to update</string>
+    <string name="load_error">error</string>
+    <string name="retry">retry</string>
 </resources>

@@ -46,6 +46,7 @@ class WeatherViewModel : ViewModel() {
             }
             override fun onSuccess(result: WeatherModel) {
                 currentWeatherLiveData.postValue(result)
+                errorMsg.postValue(null)
                 isRefreshing = false
             }
         })
