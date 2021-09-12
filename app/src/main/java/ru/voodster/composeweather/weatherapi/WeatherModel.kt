@@ -42,7 +42,7 @@ data class WeatherModel(
      *
      */
     fun strFullDate(): String =
-        SimpleDateFormat("dd/mm HH:mm", Locale.ROOT)
+        SimpleDateFormat("dd/MM HH:mm", Locale.ROOT)
             .format(Date(date.toLong().times(1000)))
 
     fun strTime(): String =
