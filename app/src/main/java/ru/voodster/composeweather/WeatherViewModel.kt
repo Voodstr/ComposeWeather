@@ -1,6 +1,8 @@
 package ru.voodster.composeweather
 
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -30,12 +32,16 @@ class WeatherViewModel : ViewModel() {
         private set
 
     var isRefreshing = false
+    var isTableRefreshing = false
 
     private val tableWeatherLiveData = MutableLiveData<List<WeatherModel>>()
     val tableWeather : LiveData<List<WeatherModel>>
         get() = tableWeatherLiveData
 
     val errorMsg = SingleLiveEvent<String>()
+
+    @Composable
+    fun errorState() = errorMsg.observeAsState()
 
     fun getCurrentWeather(){
         isRefreshing = true
@@ -54,13 +60,16 @@ class WeatherViewModel : ViewModel() {
 
 
     fun getTableWeather(){
+        isTableRefreshing = true
         weatherRepository.getTableWeather(object: WeatherRepository.GetTableWeatherCallback{
             override fun onSuccess(result: List<WeatherModel>) {
                 tableWeatherLiveData.postValue(result)
+                isTableRefreshing = false
             }
 
             override fun onError(error: String?) {
                 errorMsg.postValue(error?:"Unknown Error")
+                isTableRefreshing = false
             }
 
         })

@@ -11,7 +11,7 @@ import ru.voodster.composeweather.weatherapi.WeatherModel
 
 class MainActivity : ComponentActivity() {
     
-    val viewModel:WeatherViewModel by viewModels()
+    private val viewModel:WeatherViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

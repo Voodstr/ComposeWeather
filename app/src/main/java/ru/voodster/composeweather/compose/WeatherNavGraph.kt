@@ -25,15 +25,9 @@ object MainDestinations {
 @Composable
 fun WeatherNavGraph(innerPadding:PaddingValues,
                     viewmodel: WeatherViewModel,
-                    navController: NavHostController = rememberNavController(), // контроллер навигации
-                    scaffoldState: ScaffoldState = rememberScaffoldState(), // состояние экрана
+                    navController: NavHostController = rememberNavController(), // контроллер навигации // состояние экрана
                     startDestination: String = MainDestinations.HOME_ROUTE // начальная точка UI
 ) {
-    val coroutineScope = rememberCoroutineScope() // область процесса
-
-    val currentWeather = viewmodel.currentWeather.observeAsState()
-    val refreshState = rememberSwipeRefreshState(isRefreshing = viewmodel.isRefreshing)
-
 
     NavHost(                   // navHost -- сама вьюшка, в которой меняются окна и есть все тулбары
         navController = navController,
@@ -44,11 +38,7 @@ fun WeatherNavGraph(innerPadding:PaddingValues,
             WeatherScreen(viewModel = viewmodel)
         }// таких штук можно добавить сколько угодно (не забуду добавить им названия 'MainDestinations')
         composable(MainDestinations.TABLE_ROUTE) { // что выдавать в при переходе на домашнюю страницу
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()) {
-                Text(text = "TABLE",fontSize = 70.sp)
-            }
+            TableScreen(viewModel = viewmodel)
         }
         composable(MainDestinations.CHART_ROUTE) { // что выдавать в при переходе на домашнюю страницу
             Box(modifier = Modifier

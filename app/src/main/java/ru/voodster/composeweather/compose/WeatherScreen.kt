@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,37 +22,62 @@ import ru.voodster.composeweather.ui.theme.primaryDarkColor
 import ru.voodster.composeweather.ui.theme.secondaryColor
 import ru.voodster.composeweather.ui.theme.secondaryTextColor
 import ru.voodster.composeweather.weatherapi.WeatherModel
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 val fakeWeather = WeatherModel(1331377702, 0, 50, 0, 755, 200)
 val nullWeather = WeatherModel(0, 0, 0, 0, 0, 0)
 
+
+
+
 @Composable
 fun WeatherScreen(viewModel: WeatherViewModel) {
-    val currentWeather = viewModel.currentWeather.observeAsState()
+    val currentWeather = viewModel.currentWeather.observeAsState() //State<WeatherModel?>
     val error = viewModel.errorMsg.observeAsState()
     if (currentWeather.value == null) viewModel.getCurrentWeather()
+    MainScreen(isRefreshing = viewModel.isRefreshing,
+        onRefresh = { viewModel.getCurrentWeather() },
+        data = currentWeather , error = error){
+        CurrentWeather(data = it as WeatherModel)
+    }
+}
+
+@Composable
+fun TableScreen(viewModel: WeatherViewModel){
+    if (viewModel.tableWeather.value == null) viewModel.getTableWeather()
+    MainScreen(isRefreshing = viewModel.isTableRefreshing,
+        onRefresh = { viewModel.getTableWeather() },
+        data = viewModel.tableWeather.observeAsState(),
+        error =viewModel.errorState()){data->
+        WeatherList(data = data as List<WeatherModel>)
+    }
+}
+
+@Composable
+fun MainScreen(isRefreshing:Boolean,
+               onRefresh: () -> Unit,
+               data: State<Any?>,
+               error: State<String?>,
+               content: @Composable (Any) -> Unit){
     Scaffold(
         backgroundColor = primaryDarkColor, modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
         SwipeRefresh(
-            state = rememberSwipeRefreshState(viewModel.isRefreshing),
-            onRefresh = { viewModel.getCurrentWeather() },
+            state = rememberSwipeRefreshState(isRefreshing),
+            onRefresh = { onRefresh() },
             content = {
                 HomeScreenErrorAndContent(
-                    data = currentWeather.value,
+                    data = data.value,
                     error = error.value,
-                    onRefresh = { viewModel.getCurrentWeather() }
-                ) { data ->
-                    CurrentWeather(data = data as WeatherModel)
-                }
+                    onRefresh = { onRefresh() }
+                ) { data -> content(data) }
             })
     }
 }
+
+
 
 @Composable
 private fun HomeScreenErrorAndContent(
@@ -90,34 +116,71 @@ fun ErrorScreen(error: String?, onRefresh: () -> Unit) {
 
 @Composable
 private fun FullScreenLoading() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(Alignment.Center)
-    ) {
-        CircularProgressIndicator()
+    Column(
+        Modifier
+            .fillMaxHeight()
+            .fillMaxWidth(),verticalArrangement = Arrangement.Center) {
+        Text(text = "LOADING",fontSize = 40.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth())
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .wrapContentSize(Alignment.Center)
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+
+
+}
+@Composable
+fun WeatherRow(data: WeatherModel){
+    Row(modifier = Modifier
+        .padding(0.dp, 10.dp)
+        .fillMaxWidth(),Arrangement.SpaceEvenly) {
+        RowText(data.strTime())
+        RowText(data.strTemp())
+        RowText(data.strPress())
+        RowText(data.strHum())
     }
 }
 
 @Composable
+fun WeatherList(data:List<WeatherModel>){
+    LazyColumn(){
+        data.forEach(){
+            item { WeatherRow(data = it) }
+        }
+    }
+}
+
+@Composable
+private fun RowText(
+    text: String,
+) {
+    val s = 20.sp
+    val textPadding = Modifier.padding(5.dp)
+    Text(text = text,modifier = textPadding, fontSize = s)
+}
+
+
+@Composable
 fun CurrentWeather(data: WeatherModel) {
-    val fTemp = "${data.temp.toDouble().div(10.0)}°C"
-    val sdf = SimpleDateFormat("dd/MM HH:mm", Locale.ROOT)
-    val fDate = sdf.format(Date(data.date.toLong().times(1000)))
-    val fPress = "${data.press} mm"
-    val fHum = "${data.hum}%"
     LazyColumn(
         verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier
             .fillMaxHeight()
             .padding(10.dp)
     ) {
-        item { TextOnSurface(text = fDate, textSize = 40.sp) }
-        item { TextOnSurface(text = fTemp, textSize = 60.sp) }
-        item { TextOnSurface(text = fPress, textSize = 40.sp) }
-        item { TextOnSurface(text = fHum, textSize = 40.sp) }
+        item { TextOnSurface(text = data.strFullDate(), textSize = 40.sp) }
+        item { TextOnSurface(text = data.strTemp(), textSize = 60.sp) }
+        item { TextOnSurface(text = data.strPress(), textSize = 40.sp) }
+        item { TextOnSurface(text = data.strHum(), textSize = 40.sp) }
     }
 }
+
+
 
 
 @Composable
@@ -163,5 +226,15 @@ fun LoadingPreview() {
         HomeScreenErrorAndContent(data = null, error = null, onRefresh = { /*TODO*/ }) {
         }
     }
+}
+@Preview("Row")
+@Composable
+fun RowPreview() {
+    WeatherRow(data = fakeWeather)
+}
+@Preview("Row Big Font",fontScale = 1.5f)
+@Composable
+fun RowBigFontPreview() {
+    WeatherRow(data = fakeWeather)
 }
 

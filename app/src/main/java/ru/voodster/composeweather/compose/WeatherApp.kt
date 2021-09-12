@@ -18,6 +18,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import ru.voodster.composeweather.compose.MainDestinations
 
 import ru.voodster.composeweather.compose.WeatherNavGraph
 import ru.voodster.composeweather.ui.theme.*
@@ -61,12 +62,11 @@ fun WeatherApp(
                 scaffoldState = scaffoldState,
                 bottomBar = {BottomNavigationBar(navController, bottomNavigationItems)}
             )
-
             {innerPadding->
                 WeatherNavGraph(
                     viewmodel = appContainer,
                     navController = navController,
-                    scaffoldState = scaffoldState,innerPadding = innerPadding
+                    innerPadding = innerPadding
                 )
             }
         }
@@ -128,9 +128,9 @@ fun BottomNavigationBar(navController: NavHostController, items: List<BottomNavi
 
 
 enum class BottomNavigationScreens(val route: String, @StringRes val resourceId: Int, val icon: ImageVector ) {
-    CURRENT("home/current", R.string.Indication, Icons.Filled.Home),
-    TABLE("home/table", R.string.Table, Icons.Filled.List),
-    CHART("home/chart", R.string.Chart, Icons.Filled.DateRange)
+    CURRENT(MainDestinations.HOME_ROUTE, R.string.Indication, Icons.Filled.Home),
+    TABLE(MainDestinations.TABLE_ROUTE, R.string.Table, Icons.Filled.List),
+    CHART(MainDestinations.CHART_ROUTE, R.string.Chart, Icons.Filled.DateRange)
 }
 
 
