@@ -40,8 +40,6 @@ class WeatherViewModel : ViewModel() {
 
     val errorMsg = SingleLiveEvent<String>()
 
-    @Composable
-    fun errorState() = errorMsg.observeAsState()
 
     fun getCurrentWeather(){
         isRefreshing = true

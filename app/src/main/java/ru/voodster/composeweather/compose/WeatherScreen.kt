@@ -1,5 +1,6 @@
 package ru.voodster.composeweather.compose
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +23,9 @@ import ru.voodster.composeweather.ui.theme.primaryDarkColor
 import ru.voodster.composeweather.ui.theme.secondaryColor
 import ru.voodster.composeweather.ui.theme.secondaryTextColor
 import ru.voodster.composeweather.weatherapi.WeatherModel
+import java.util.*
+import java.util.Calendar.DATE
+import java.util.Calendar.DAY_OF_MONTH
 
 
 val fakeWeather = WeatherModel(1331377702, 0, 50, 0, 755, 200)
@@ -48,7 +52,7 @@ fun TableScreen(viewModel: WeatherViewModel){
     MainScreen(isRefreshing = viewModel.isTableRefreshing,
         onRefresh = { viewModel.getTableWeather() },
         data = viewModel.tableWeather.observeAsState(),
-        error =viewModel.errorState()){data->
+        error =viewModel.errorMsg.observeAsState()){data->
         WeatherList(data = data as List<WeatherModel>)
     }
 }
@@ -149,10 +153,26 @@ fun WeatherRow(data: WeatherModel){
 @Composable
 fun WeatherList(data:List<WeatherModel>){
     LazyColumn(){
+        var preDay = Calendar.getInstance().get(DATE)
         data.forEach(){
+
+            val curDate = Calendar.getInstance()
+            curDate.time = Date(it.date.toLong().times(1000))
+            val curDay = curDate.get(DATE)
+            if (preDay>curDay){
+                item { NewDayText(text = it.strDayOfMonth()) }
+            }
+            preDay = curDay
+
+
             item { WeatherRow(data = it) }
         }
     }
+}
+
+@Composable
+fun NewDayText(text: String){
+    Text(text = text,Modifier.fillMaxWidth(),textAlign = TextAlign.Center,fontSize = 30.sp)
 }
 
 @Composable

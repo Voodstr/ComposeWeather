@@ -35,7 +35,7 @@ data class WeatherModel(
      *
      */
 
-    fun strPress() = "${press} mm"
+    fun strPress() = "$press mm"
 
     /**
      * Str date
@@ -47,6 +47,10 @@ data class WeatherModel(
 
     fun strTime(): String =
         SimpleDateFormat("HH:mm", Locale.ROOT)
+            .format(Date(date.toLong().times(1000)))
+
+    fun strDayOfMonth(): String =
+        SimpleDateFormat("dd/MM", Locale.ROOT)
             .format(Date(date.toLong().times(1000)))
 
 }
