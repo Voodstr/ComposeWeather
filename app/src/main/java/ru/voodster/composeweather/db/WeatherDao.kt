@@ -10,10 +10,11 @@ import io.reactivex.rxjava3.core.Single
 interface WeatherDao {
 
     @Query("SELECT * FROM weather_table limit :limit offset :offset ")
-    fun getWeather(offset:Int, limit:Int): Single<List<WeatherE>>
+    fun getWeather(offset: Int, limit: Int): Single<List<WeatherE>>
 
     @Insert
     fun insertAll(vararg users: WeatherE)
+
     @Delete
     fun delete(user: WeatherE)
 }

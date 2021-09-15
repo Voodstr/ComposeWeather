@@ -13,47 +13,47 @@ class WeatherRepository @Inject constructor(
 ) {
 
 
-    private val fakeWeather = WeatherModel(0,0,0,0,0,0)
+    private val fakeWeather = WeatherModel(0, 0, 0, 0, 0, 0)
     private var curWeather: WeatherModel = fakeWeather
 
     private val tableWeather = ArrayList<WeatherModel>()
-    private val fakeTable  = arrayListOf(fakeWeather,fakeWeather,fakeWeather)
 
-    fun getCurrentWeather(callback: GetWeatherCallback){
+    fun getCurrentWeather(callback: GetWeatherCallback) {
         api.getWeather()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe( { r ->
+            .subscribe({ result ->
                 run {
-                    curWeather = r
+                    curWeather = result
                     callback.onSuccess(curWeather)
                 }
-            },{ error ->
-            callback.onError(error.localizedMessage)
-        })
+            }, { error ->
+                callback.onError(error.localizedMessage)
+            })
     }
 
-    fun getTableWeather(callback: GetTableWeatherCallback){
-        api.getTableData(1000)
+    fun getTableWeather(callback: GetTableWeatherCallback) {
+        api.getTableData(300)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe( { r ->
+            .subscribe({ r ->
                 run {
                     tableWeather.clear()
                     tableWeather.addAll(r)
                     callback.onSuccess(tableWeather)
                 }
-            },{ error ->
+            }, { error ->
                 callback.onError(error.localizedMessage)
             })
     }
 
-    interface GetWeatherCallback{
+    interface GetWeatherCallback {
         fun onSuccess(result: WeatherModel)
-        fun onError(error:String?)
+        fun onError(error: String?)
     }
-    interface GetTableWeatherCallback{
+
+    interface GetTableWeatherCallback {
         fun onSuccess(result: List<WeatherModel>)
-        fun onError(error:String?)
+        fun onError(error: String?)
     }
 }

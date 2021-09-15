@@ -7,10 +7,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 
-class WeatherUpdater(): LifecycleObserver {
+class WeatherUpdater : LifecycleObserver {
 
     private val handler = Handler(Looper.getMainLooper())
-
 
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -18,6 +17,7 @@ class WeatherUpdater(): LifecycleObserver {
         Log.d(TAG, "onResume")
 
     }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onLifecyclePaused() {
         Log.d(TAG, "onPause")

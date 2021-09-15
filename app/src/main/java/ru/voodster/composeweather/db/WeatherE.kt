@@ -15,4 +15,4 @@ data class WeatherE(
     @ColumnInfo(name = "Date") val Date: Long,
     @ColumnInfo(name = "Hum") val Hum: Int,
     @ColumnInfo(name = "Temp") val Temp: Int
-):Parcelable
+) : Parcelable

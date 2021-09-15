@@ -1,62 +1,56 @@
 package ru.voodster.composeweather.compose
 
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.launch
-import ru.voodster.composeweather.App
-import ru.voodster.composeweather.WeatherRepository
-import ru.voodster.composeweather.weatherapi.WeatherModel
+import ru.voodster.composeweather.WeatherViewModel
 
 object MainDestinations {
-    const val HOME_ROUTE = "home"
-    const val INTERESTS_ROUTE = "interests"
-    const val ARTICLE_ROUTE = "post"
-    const val ARTICLE_ID_KEY = "postId"
+    const val HOME_ROUTE = "home/current"
+    const val TABLE_ROUTE = "home/table"
+    const val CHART_ROUTE = "home/chart"
 }
 
 
 @Composable
 fun WeatherNavGraph(
-    appContainer: WeatherRepository,  // DI интерфейс, который должен выдавать обьект-репозиторий
-    navController: NavHostController = rememberNavController(), // контроллер навигации
-    scaffoldState: ScaffoldState = rememberScaffoldState(), // состояние экрана
+    innerPadding: PaddingValues,
+    viewModel: WeatherViewModel,
+    navController: NavHostController = rememberNavController(), // контроллер навигации // состояние экрана
     startDestination: String = MainDestinations.HOME_ROUTE // начальная точка UI
 ) {
-    val actions = remember(navController) { MainActions(navController) } // TODO ?????
-    val coroutineScope = rememberCoroutineScope() // область процесса
-    val openDrawer: () -> Unit = { coroutineScope.launch { scaffoldState.drawerState.open() } }
-    var currentWeather = WeatherModel(1630673409,0,60,0,755,200)
-    appContainer.getCurrentWeather(object: WeatherRepository.GetWeatherCallback{
-        override fun onError(error: String?) {
-        }
-        override fun onSuccess(result: WeatherModel) {
-            currentWeather = result
-        }
-    })
 
     NavHost(                   // navHost -- сама вьюшка, в которой меняются окна и есть все тулбары
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        modifier = Modifier.padding(innerPadding) // отступ для bottomNavigationBar
     ) {
         composable(MainDestinations.HOME_ROUTE) { // что выдавать в при переходе на домашнюю страницу
-            Weather(data =  currentWeather)
+            WeatherScreen(viewModel = viewModel)
         }// таких штук можно добавить сколько угодно (не забуду добавить им названия 'MainDestinations')
+        composable(MainDestinations.TABLE_ROUTE) { // что выдавать в при переходе на домашнюю страницу
+            TableScreen(viewModel = viewModel)
+        }
+        composable(MainDestinations.CHART_ROUTE) { // что выдавать в при переходе на домашнюю страницу
+            Scaffold {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                ) {
+                    Text(text = "Chart", fontSize = 50.sp)
+                }
+            }
+        }
     }
 }
 
-
-/**
- * Models the navigation actions in the app.
- */
-class MainActions(navController: NavHostController) {
-    val upPress: () -> Unit = {
-        navController.navigateUp()
-    }
-}
