@@ -7,8 +7,8 @@ Weather application based on self made Arduino weather station with Raspberry Pi
 + MVVM
 + Retrofit
 + RxKotlin
-+ Room (disabled)
 + Dagger
++ Room (disabled)
 
 
 ---
