@@ -12,7 +12,7 @@ Weather application based on self made Arduino weather station with Raspberry Pi
 
 
 ---
-1. Indication screen. Background based on season (summer, autumn, winter, spring). Temp color changes
+1. Indication screen.
 
 <img src="Screenshots/home.png" width="300">
 
