@@ -1,7 +1,5 @@
 # ComposeWeather
 
-# WeatherStation
-
 Weather application based on self made Arduino weather station with Raspberry Pi Rest api server
 
 ### Key tech
