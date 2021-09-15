@@ -1,5 +1,6 @@
 package ru.voodster.composeweather.compose
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -31,9 +32,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import ru.voodster.composeweather.R
 import ru.voodster.composeweather.WeatherViewModel
 import ru.voodster.composeweather.ui.theme.ComposeWeatherTheme
-import ru.voodster.composeweather.ui.theme.primaryDarkColor
-import ru.voodster.composeweather.ui.theme.primaryLightColor
-import ru.voodster.composeweather.ui.theme.primaryTextColor
 
 
 private val NavGraph.startDestination: NavDestination?
@@ -49,7 +47,6 @@ private tailrec fun findStartDestination(graph: NavDestination): NavDestination 
 fun WeatherApp(
     appContainer: WeatherViewModel
 ) {
-    ComposeWeatherTheme { //
         ProvideWindowInsets(windowInsetsAnimationsEnabled = true) { // обьявляем обработку вставок типа клавиатуры или navBar
             val systemUiController = rememberSystemUiController() // Контроллер системного UI -
             // теже клавиатура navBar statusBar
@@ -82,8 +79,6 @@ fun WeatherApp(
                 )
             }
         }
-    }
-
 }
 
 @Composable
@@ -95,12 +90,11 @@ fun BottomNavigationBar(navController: NavHostController, items: List<BottomNavi
     val sections = remember { BottomNavigationScreens.values() }
     val routes = remember { sections.map { it.route } }
 
+
     if (currentRoute in routes) {
         val currentSection = sections.first { it.route == currentRoute }
         BottomAppBar(
-            backgroundColor = primaryLightColor,
-            contentColor = primaryTextColor,
-            elevation = 4.dp
+            elevation = 8.dp
         ) {
             items.forEach { section ->
                 val selected = section == currentSection
@@ -108,9 +102,7 @@ fun BottomNavigationBar(navController: NavHostController, items: List<BottomNavi
                     icon = { Icon(section.icon, "contentDescription") },
                     label = { Text(stringResource(id = section.resourceId)) },
                     selected = selected,
-                    selectedContentColor = primaryTextColor,
-                    unselectedContentColor = primaryDarkColor,
-                    alwaysShowLabel = true, // This hides the title for the unselected items
+                    alwaysShowLabel = false, // This hides the title for the unselected items
                     onClick = {
                         // This if check gives us a "singleTop" behavior where we do not create a
                         // second instance of the composable if we are already on that destination
@@ -143,46 +135,49 @@ enum class BottomNavigationScreens(
 }
 
 @Preview("WeatherApp")
-@Preview("WeatherApp. Big font",fontScale = 1.4f)
+@Preview("WeatherApp. Big font",fontScale = 1.3f)
 @Preview("WeatherApp. Small font",fontScale = 0.8f)
+@Preview("WeatherApp. Dark Theme",uiMode = UI_MODE_NIGHT_YES )
 @Composable
 fun WeatherAppPreview() {
+    ComposeWeatherTheme {
 
-    val bottomItems = listOf(
-        BottomNavigationScreens.CURRENT,
-        BottomNavigationScreens.TABLE,
-        BottomNavigationScreens.CHART
-    )
-    Scaffold(
-        scaffoldState = rememberScaffoldState(),
-        bottomBar = {
-            BottomAppBar(
-                backgroundColor = primaryLightColor,
-                contentColor = primaryLightColor
-            ) {
-                bottomItems.forEach { item ->
-                    val selected = stringResource(id = item.resourceId) == "Home"
-                    BottomNavigationItem(
-                        selected = selected,
-                        onClick = { },
-                        icon = { Icon(imageVector = item.icon, contentDescription = item.name) },
-                        label = { Text(stringResource(id = item.resourceId)) },
-                        selectedContentColor = primaryTextColor,
-                        unselectedContentColor = primaryDarkColor
-                    )
+        val bottomItems = listOf(
+            BottomNavigationScreens.CURRENT,
+            BottomNavigationScreens.TABLE,
+            BottomNavigationScreens.CHART
+        )
+        Scaffold(
+            scaffoldState = rememberScaffoldState(),
+            bottomBar = {
+                BottomAppBar {
+                    bottomItems.forEach { item ->
+                        val selected = stringResource(id = item.resourceId) == "Home"
+                        BottomNavigationItem(
+                            selected = selected,
+                            onClick = { },
+                            icon = {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = item.name
+                                )
+                            },
+                            label = { Text(stringResource(id = item.resourceId)) }
+                        )
+                    }
+
                 }
-
             }
-        }
-    ) {
-        Scaffold(modifier = Modifier.padding(it), backgroundColor = primaryDarkColor) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-            ) {
-                Text(text = "Fragment", fontSize = 50.sp)
+        ) {
+            Scaffold(modifier = Modifier.padding(it)) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                ) {
+                    Text(text = "Fragment", fontSize = 50.sp)
+                }
             }
         }
     }

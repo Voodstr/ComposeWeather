@@ -17,7 +17,7 @@ class ApiModule {
     @Provides
     fun provideApi(): WeatherService {
 
-        val url:String =  "https://svn.signalmodelling.ru/"
+        val url = "https://svn.signalmodelling.ru/"
         val okHttpClient = OkHttpClient.Builder()
             .build()
 

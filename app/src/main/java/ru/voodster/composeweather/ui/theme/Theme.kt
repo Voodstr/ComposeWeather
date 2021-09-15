@@ -1,30 +1,37 @@
 package ru.voodster.composeweather.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
+
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = dark_primaryLightColor,
+    primaryVariant = dark_primaryColor,
+    secondary = dark_secondaryLightColor,
+    secondaryVariant = dark_secondaryColor,
+    background = dark_primaryDarkColor,
+    surface = dark_secondaryDarkColor,
+    onPrimary = dark_primaryTextColor,
+    onSecondary = dark_secondaryTextColor,
+    onBackground = dark_primaryTextColor,
+    onSurface = dark_secondaryTextColor
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+    primary = primaryLightColor,
+    primaryVariant = primaryColor,
+    secondary = secondaryLightColor,
+    secondaryVariant = secondaryColor,
+    background = primaryDarkColor,
+    surface = secondaryDarkColor,
+    onPrimary = primaryTextColor,
+    onSecondary = secondaryTextColor,
+    onBackground = primaryTextColor,
+    onSurface = secondaryTextColor
 )
 
 @Composable

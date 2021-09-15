@@ -10,15 +10,13 @@ import ru.voodster.composeweather.ui.theme.ComposeWeatherTheme
 
 class MainActivity : ComponentActivity() {
     
-    private val viewModel:WeatherViewModel by viewModels()
+    private val viewModel: WeatherViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeWeatherTheme {
-                Scaffold() {
                     WeatherApp(appContainer = viewModel )
-                }
             }
         }
     }

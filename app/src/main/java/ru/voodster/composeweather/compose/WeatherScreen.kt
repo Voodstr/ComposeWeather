@@ -16,10 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.voodster.composeweather.WeatherViewModel
 import ru.voodster.composeweather.ui.theme.ComposeWeatherTheme
-import ru.voodster.composeweather.ui.theme.secondaryColor
-import ru.voodster.composeweather.ui.theme.secondaryTextColor
 import ru.voodster.composeweather.weatherapi.WeatherModel
-
 
 
 @Composable
@@ -56,8 +53,8 @@ fun CurrentWeather(data: WeatherModel) {
 @Composable
 fun TextOnSurface(text: String, textSize: TextUnit) {
     Surface(
-        shape = RoundedCornerShape(3.dp),
-        color = secondaryColor
+        shape = RoundedCornerShape(5.dp),
+        elevation = 8.dp
     ) {
         Text(
             modifier = Modifier
@@ -65,14 +62,14 @@ fun TextOnSurface(text: String, textSize: TextUnit) {
                 .wrapContentSize(Alignment.Center),
             textAlign = TextAlign.Center,
             fontSize = textSize,
-            color = secondaryTextColor,
             text = text
         )
     }
 }
 
 @Preview("WeatherScreen")
-@Preview("WeatherScreen fontsScale 1.5", fontScale = 1.5f)
+@Preview("WeatherScreen. Big font", fontScale = 1.3f)
+@Preview("WeatherScreen. Small font", fontScale = 0.8f)
 @Composable
 fun DefaultPreview() {
     ComposeWeatherTheme {

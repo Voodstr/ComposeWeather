@@ -1,10 +1,11 @@
 package ru.voodster.composeweather.compose
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -20,10 +21,11 @@ object MainDestinations {
 
 
 @Composable
-fun WeatherNavGraph(innerPadding:PaddingValues,
-                    viewModel: WeatherViewModel,
-                    navController: NavHostController = rememberNavController(), // контроллер навигации // состояние экрана
-                    startDestination: String = MainDestinations.HOME_ROUTE // начальная точка UI
+fun WeatherNavGraph(
+    innerPadding: PaddingValues,
+    viewModel: WeatherViewModel,
+    navController: NavHostController = rememberNavController(), // контроллер навигации // состояние экрана
+    startDestination: String = MainDestinations.HOME_ROUTE // начальная точка UI
 ) {
 
     NavHost(                   // navHost -- сама вьюшка, в которой меняются окна и есть все тулбары
@@ -38,10 +40,15 @@ fun WeatherNavGraph(innerPadding:PaddingValues,
             TableScreen(viewModel = viewModel)
         }
         composable(MainDestinations.CHART_ROUTE) { // что выдавать в при переходе на домашнюю страницу
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()) {
-                Text(text = "Chart",fontSize = 70.sp,textAlign = TextAlign.Center)
+            Scaffold {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                ) {
+                    Text(text = "Chart", fontSize = 50.sp)
+                }
             }
         }
     }

@@ -57,20 +57,24 @@ data class WeatherModel(
      * @param dateOffset - in minutes
      * @return
      */
-    fun fakeWeather(dateOffset:Int):WeatherModel=
-        WeatherModel(Calendar.getInstance().timeInMillis.minus(dateOffset.times(60000)).div(1000).toInt(),
+    fun fakeWeather(dateOffset: Int): WeatherModel =
+        WeatherModel(
+            Calendar.getInstance().timeInMillis.minus(dateOffset.times(60000)).div(1000).toInt(),
             (100..250).random(),
             (10..95).random(),
             0,
-            (730..785).random(),
-            (-200..300).random())
+            (730..770).random(),
+            (-200..300).random()
+        )
 
-    fun fakeWeather():WeatherModel=
-        WeatherModel(Calendar.getInstance().timeInMillis.div(1000).toInt(),
+    fun fakeWeather(): WeatherModel =
+        WeatherModel(
+            Calendar.getInstance().timeInMillis.div(1000).toInt(),
             (100..250).random(),
             (10..95).random(),
             0,
-            (730..785).random(),
-            (-200..300).random())
+            (730..770).random(),
+            (-200..300).random()
+        )
 
 }

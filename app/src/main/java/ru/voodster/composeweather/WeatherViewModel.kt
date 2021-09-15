@@ -1,9 +1,6 @@
 package ru.voodster.composeweather
 
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +8,7 @@ import ru.voodster.composeweather.weatherapi.WeatherModel
 
 
 class WeatherViewModel : ViewModel() {
-    private val viewModelComponent=DaggerWeatherRepoComponent.builder().build()
+    private val viewModelComponent = DaggerWeatherRepoComponent.builder().build()
     private val weatherRepository = viewModelComponent.repos()
 
     init {
@@ -19,23 +16,23 @@ class WeatherViewModel : ViewModel() {
     }
 
     private val currentWeatherLiveData = MutableLiveData<WeatherModel>()
-    val currentWeather : LiveData<WeatherModel>
+    val currentWeather: LiveData<WeatherModel>
         get() = currentWeatherLiveData
     var isWeatherRefreshing = false
 
     private val tableWeatherLiveData = MutableLiveData<List<WeatherModel>>()
-    val tableWeather : LiveData<List<WeatherModel>>
+    val tableWeather: LiveData<List<WeatherModel>>
         get() = tableWeatherLiveData
     var isTableRefreshing = false
 
     val errorMsg = SingleLiveEvent<String>()
 
 
-    fun getCurrentWeather(){
+    fun getCurrentWeather() {
         isWeatherRefreshing = true
-        weatherRepository.getCurrentWeather(object: WeatherRepository.GetWeatherCallback{
+        weatherRepository.getCurrentWeather(object : WeatherRepository.GetWeatherCallback {
             override fun onError(error: String?) {
-                errorMsg.postValue(error?:"Unknown Error")
+                errorMsg.postValue(error ?: "Unknown Error")
                 isWeatherRefreshing = false
             }
             override fun onSuccess(result: WeatherModel) {
@@ -46,19 +43,17 @@ class WeatherViewModel : ViewModel() {
     }
 
 
-    fun getTableWeather(){
+    fun getTableWeather() {
         isTableRefreshing = true
-        weatherRepository.getTableWeather(object: WeatherRepository.GetTableWeatherCallback{
+        weatherRepository.getTableWeather(object : WeatherRepository.GetTableWeatherCallback {
             override fun onSuccess(result: List<WeatherModel>) {
                 tableWeatherLiveData.postValue(result)
                 isTableRefreshing = false
             }
-
             override fun onError(error: String?) {
-                errorMsg.postValue(error?:"Unknown Error")
+                errorMsg.postValue(error ?: "Unknown Error")
                 isTableRefreshing = false
             }
-
         })
     }
 

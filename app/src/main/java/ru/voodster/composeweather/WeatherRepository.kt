@@ -1,8 +1,5 @@
 package ru.voodster.composeweather
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.voodster.composeweather.db.WeatherDatabase
@@ -16,47 +13,47 @@ class WeatherRepository @Inject constructor(
 ) {
 
 
-
-    private val fakeWeather = WeatherModel(0,0,0,0,0,0)
+    private val fakeWeather = WeatherModel(0, 0, 0, 0, 0, 0)
     private var curWeather: WeatherModel = fakeWeather
 
     private val tableWeather = ArrayList<WeatherModel>()
 
-    fun getCurrentWeather(callback: GetWeatherCallback){
+    fun getCurrentWeather(callback: GetWeatherCallback) {
         api.getWeather()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe( { result ->
+            .subscribe({ result ->
                 run {
                     curWeather = result
                     callback.onSuccess(curWeather)
                 }
-            },{ error ->
+            }, { error ->
                 callback.onError(error.localizedMessage)
-        })
+            })
     }
 
-    fun getTableWeather(callback: GetTableWeatherCallback){
+    fun getTableWeather(callback: GetTableWeatherCallback) {
         api.getTableData(300)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe( { r ->
+            .subscribe({ r ->
                 run {
                     tableWeather.clear()
                     tableWeather.addAll(r)
                     callback.onSuccess(tableWeather)
                 }
-            },{ error ->
+            }, { error ->
                 callback.onError(error.localizedMessage)
             })
     }
 
-    interface GetWeatherCallback{
+    interface GetWeatherCallback {
         fun onSuccess(result: WeatherModel)
-        fun onError(error:String?)
+        fun onError(error: String?)
     }
-    interface GetTableWeatherCallback{
+
+    interface GetTableWeatherCallback {
         fun onSuccess(result: List<WeatherModel>)
-        fun onError(error:String?)
+        fun onError(error: String?)
     }
 }

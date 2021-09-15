@@ -9,8 +9,7 @@ import javax.inject.Singleton
 @Module
 class DbModule {
 
-
-    companion object{
+    companion object {
         const val DATABASE_NAME = "weatherDb.db"
     }
 

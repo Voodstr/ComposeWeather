@@ -16,9 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.voodster.composeweather.ui.theme.ComposeWeatherTheme
-import ru.voodster.composeweather.ui.theme.primaryDarkColor
-
-
+import ru.voodster.composeweather.ui.theme.primaryTextColor
 
 
 @Composable
@@ -30,7 +28,7 @@ fun Fragment(
     content: @Composable (Any) -> Unit
 ) {
     Scaffold(
-        backgroundColor = primaryDarkColor, modifier = Modifier
+        modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
     ) {
@@ -73,12 +71,15 @@ fun ErrorScreen(error: String?, onRefresh: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.padding(5.dp, 5.dp).fillMaxWidth().fillMaxHeight()
+        modifier = Modifier
+            .padding(5.dp, 5.dp)
+            .fillMaxWidth()
+            .fillMaxHeight()
     ) {
         Text(text = "Network problem", fontSize = 50.sp, textAlign = TextAlign.Center)
         Text(text = error ?: "Unknown", fontSize = 20.sp, textAlign = TextAlign.Center)
         Button(onClick = onRefresh) {
-            Text(text = "REFRESH", fontSize = 50.sp)
+            Text(text = "Refresh", fontSize = 50.sp, color = primaryTextColor)
         }
     }
 }
@@ -106,7 +107,6 @@ private fun FullScreenLoading() {
 
 
 }
-
 
 
 @Preview("Error screen")
