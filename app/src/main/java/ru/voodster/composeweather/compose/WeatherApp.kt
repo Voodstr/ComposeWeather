@@ -64,7 +64,7 @@ fun WeatherApp(
             )
             {innerPadding->
                 WeatherNavGraph(
-                    viewmodel = appContainer,
+                    viewModel = appContainer,
                     navController = navController,
                     innerPadding = innerPadding
                 )

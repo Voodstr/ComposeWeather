@@ -1,18 +1,15 @@
 package ru.voodster.composeweather.compose
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.voodster.composeweather.WeatherViewModel
 
 object MainDestinations {
@@ -24,7 +21,7 @@ object MainDestinations {
 
 @Composable
 fun WeatherNavGraph(innerPadding:PaddingValues,
-                    viewmodel: WeatherViewModel,
+                    viewModel: WeatherViewModel,
                     navController: NavHostController = rememberNavController(), // контроллер навигации // состояние экрана
                     startDestination: String = MainDestinations.HOME_ROUTE // начальная точка UI
 ) {
@@ -35,16 +32,16 @@ fun WeatherNavGraph(innerPadding:PaddingValues,
         modifier = Modifier.padding(innerPadding) // отступ для bottomNavigationBar
     ) {
         composable(MainDestinations.HOME_ROUTE) { // что выдавать в при переходе на домашнюю страницу
-            WeatherScreen(viewModel = viewmodel)
+            WeatherScreen(viewModel = viewModel)
         }// таких штук можно добавить сколько угодно (не забуду добавить им названия 'MainDestinations')
         composable(MainDestinations.TABLE_ROUTE) { // что выдавать в при переходе на домашнюю страницу
-            TableScreen(viewModel = viewmodel)
+            TableScreen(viewModel = viewModel)
         }
         composable(MainDestinations.CHART_ROUTE) { // что выдавать в при переходе на домашнюю страницу
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()) {
-                Text(text = "Chart",fontSize = 70.sp)
+                Text(text = "Chart",fontSize = 70.sp,textAlign = TextAlign.Center)
             }
         }
     }

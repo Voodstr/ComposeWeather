@@ -1,5 +1,8 @@
 package ru.voodster.composeweather
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.voodster.composeweather.db.WeatherDatabase
@@ -13,6 +16,7 @@ class WeatherRepository @Inject constructor(
 ) {
 
 
+
     private val fakeWeather = WeatherModel(0,0,0,0,0,0)
     private var curWeather: WeatherModel = fakeWeather
 
@@ -23,13 +27,13 @@ class WeatherRepository @Inject constructor(
         api.getWeather()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe( { r ->
+            .subscribe( { result ->
                 run {
-                    curWeather = r
+                    curWeather = result
                     callback.onSuccess(curWeather)
                 }
             },{ error ->
-            callback.onError(error.localizedMessage)
+                callback.onError(error.localizedMessage)
         })
     }
 

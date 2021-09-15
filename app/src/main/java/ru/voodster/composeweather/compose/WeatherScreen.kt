@@ -1,6 +1,5 @@
 package ru.voodster.composeweather.compose
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,6 +9,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -18,51 +18,51 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import ru.voodster.composeweather.WeatherViewModel
-import ru.voodster.composeweather.ui.theme.ComposeWeatherTheme
-import ru.voodster.composeweather.ui.theme.primaryDarkColor
-import ru.voodster.composeweather.ui.theme.secondaryColor
-import ru.voodster.composeweather.ui.theme.secondaryTextColor
+import ru.voodster.composeweather.ui.theme.*
 import ru.voodster.composeweather.weatherapi.WeatherModel
 import java.util.*
 import java.util.Calendar.DATE
-import java.util.Calendar.DAY_OF_MONTH
 
 
 val fakeWeather = WeatherModel(1331377702, 0, 50, 0, 755, 200)
-val nullWeather = WeatherModel(0, 0, 0, 0, 0, 0)
-
-
 
 
 @Composable
 fun WeatherScreen(viewModel: WeatherViewModel) {
     val currentWeather = viewModel.currentWeather.observeAsState() //State<WeatherModel?>
-    val error = viewModel.errorMsg.observeAsState()
     if (currentWeather.value == null) viewModel.getCurrentWeather()
-    MainScreen(isRefreshing = viewModel.isRefreshing,
+    MainScreen(
+        isRefreshing = viewModel.isWeatherRefreshing,
         onRefresh = { viewModel.getCurrentWeather() },
-        data = currentWeather , error = error){
+        data = viewModel.currentWeather.observeAsState(),
+        error = viewModel.errorMsg.observeAsState()
+    ) {
         CurrentWeather(data = it as WeatherModel)
     }
 }
 
 @Composable
-fun TableScreen(viewModel: WeatherViewModel){
-    if (viewModel.tableWeather.value == null) viewModel.getTableWeather()
-    MainScreen(isRefreshing = viewModel.isTableRefreshing,
+fun TableScreen(viewModel: WeatherViewModel) {
+    val tableWeather = viewModel.tableWeather.observeAsState()
+    if (tableWeather.value == null) viewModel.getTableWeather()
+    MainScreen(
+        isRefreshing = viewModel.isTableRefreshing,
         onRefresh = { viewModel.getTableWeather() },
-        data = viewModel.tableWeather.observeAsState(),
-        error =viewModel.errorMsg.observeAsState()){data->
-        WeatherList(data = data as List<WeatherModel>)
+        data = tableWeather,
+        error = viewModel.errorMsg.observeAsState()
+    ) { data ->
+        WeatherList(data = data as List<*>)
     }
 }
 
 @Composable
-fun MainScreen(isRefreshing:Boolean,
-               onRefresh: () -> Unit,
-               data: State<Any?>,
-               error: State<String?>,
-               content: @Composable (Any) -> Unit){
+fun MainScreen(
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    data: State<Any?>,
+    error: State<String?>,
+    content: @Composable (Any) -> Unit
+) {
     Scaffold(
         backgroundColor = primaryDarkColor, modifier = Modifier
             .fillMaxWidth()
@@ -80,7 +80,6 @@ fun MainScreen(isRefreshing:Boolean,
             })
     }
 }
-
 
 
 @Composable
@@ -108,7 +107,7 @@ fun ErrorScreen(error: String?, onRefresh: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.padding(5.dp, 50.dp, 5.dp, 5.dp)
+        modifier = Modifier.padding(5.dp, 5.dp).fillMaxWidth().fillMaxHeight()
     ) {
         Text(text = "Network problem", fontSize = 50.sp, textAlign = TextAlign.Center)
         Text(text = error ?: "Unknown", fontSize = 20.sp, textAlign = TextAlign.Center)
@@ -123,10 +122,13 @@ private fun FullScreenLoading() {
     Column(
         Modifier
             .fillMaxHeight()
-            .fillMaxWidth(),verticalArrangement = Arrangement.Center) {
-        Text(text = "LOADING",fontSize = 40.sp,
+            .fillMaxWidth(), verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "LOADING", fontSize = 40.sp,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth())
+            modifier = Modifier.fillMaxWidth()
+        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -137,51 +139,6 @@ private fun FullScreenLoading() {
     }
 
 
-}
-@Composable
-fun WeatherRow(data: WeatherModel){
-    Row(modifier = Modifier
-        .padding(0.dp, 10.dp)
-        .fillMaxWidth(),Arrangement.SpaceEvenly) {
-        RowText(data.strTime())
-        RowText(data.strTemp())
-        RowText(data.strPress())
-        RowText(data.strHum())
-    }
-}
-
-@Composable
-fun WeatherList(data:List<WeatherModel>){
-    LazyColumn(){
-        var preDay = Calendar.getInstance().get(DATE)
-        data.forEach(){
-
-            val curDate = Calendar.getInstance()
-            curDate.time = Date(it.date.toLong().times(1000))
-            val curDay = curDate.get(DATE)
-            if (preDay>curDay){
-                item { NewDayText(text = it.strDayOfMonth()) }
-            }
-            preDay = curDay
-
-
-            item { WeatherRow(data = it) }
-        }
-    }
-}
-
-@Composable
-fun NewDayText(text: String){
-    Text(text = text,Modifier.fillMaxWidth(),textAlign = TextAlign.Center,fontSize = 30.sp)
-}
-
-@Composable
-private fun RowText(
-    text: String,
-) {
-    val s = 20.sp
-    val textPadding = Modifier.padding(5.dp)
-    Text(text = text,modifier = textPadding, fontSize = s)
 }
 
 
@@ -201,7 +158,78 @@ fun CurrentWeather(data: WeatherModel) {
 }
 
 
+@Composable
+fun WeatherList(data: List<*>) {
+    LazyColumn {
+        var preDay = Calendar.getInstance().get(DATE)
+        item { NewDayText(text = "Today") }
+        data.forEach {
+            if (it is WeatherModel) {
 
+                val curDate = Calendar.getInstance() // ищу начало дня и вставляю NewDayText
+                curDate.time = Date(it.date.toLong().times(1000))
+                val curDay = curDate.get(DATE)
+                if (preDay > curDay) {
+                    item {
+                        NewDayText(text = it.strDayOfMonth())
+                    }
+                }
+                preDay = curDay
+
+
+                item {
+                    WeatherRow(
+                        data = it,
+                        textColor = secondaryTextColor,
+                        rowColor = secondaryColor
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun WeatherRow(data: WeatherModel, rowColor: Color, textColor: Color) {
+    Surface(
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(5.dp, 2.dp),
+        color = rowColor,
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(0.dp, 8.dp)
+                .fillMaxWidth(), Arrangement.SpaceEvenly
+        ) {
+            RowText(data.strTime(), textColor)
+            RowText(data.strTemp(), textColor)
+            RowText(data.strPress(), textColor)
+            RowText(data.strHum(), textColor)
+        }
+    }
+}
+
+@Composable
+fun NewDayText(text: String) {
+    Text(
+        text = text,
+        Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center,
+        fontSize = 30.sp,
+        color = primaryTextColor
+    )
+}
+
+@Composable
+private fun RowText(
+    text: String,
+    color: Color
+) {
+    val s = 20.sp
+    val textPadding = Modifier.padding(5.dp)
+    Text(text = text, modifier = textPadding, fontSize = s, color = color)
+}
 
 @Composable
 fun TextOnSurface(text: String, textSize: TextUnit) {
@@ -247,14 +275,16 @@ fun LoadingPreview() {
         }
     }
 }
+
 @Preview("Row")
 @Composable
 fun RowPreview() {
-    WeatherRow(data = fakeWeather)
+    WeatherRow(data = fakeWeather, textColor = secondaryTextColor, rowColor = secondaryColor)
 }
-@Preview("Row Big Font",fontScale = 1.5f)
+
+@Preview("Row Big Font", fontScale = 1.5f)
 @Composable
 fun RowBigFontPreview() {
-    WeatherRow(data = fakeWeather)
+    WeatherRow(data = fakeWeather, textColor = secondaryTextColor, rowColor = secondaryColor)
 }
 
