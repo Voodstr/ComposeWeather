@@ -2,7 +2,7 @@
 
 Weather application based on self made Arduino weather station with Raspberry Pi Rest api server, and UI made with Jetpack Compose
 
-### Key tech
+### Key tech in this App 
 + Jetpack compose
 + MVVM
 + Retrofit
