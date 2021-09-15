@@ -47,7 +47,7 @@ fun WeatherApp(
                 //systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
             }
             val navController = rememberNavController() // Контроллер навигации
-            val coroutineScope = rememberCoroutineScope() // Область процесса в котором живет UI
+            //val coroutineScope = rememberCoroutineScope() // Область процесса в котором живет UI
 
             // This top level scaffold contains the app drawer, which needs to be accessible
             // from multiple screens. An event to open the drawer is passed down to each
@@ -91,13 +91,6 @@ fun BottomNavigationBar(navController: NavHostController, items: List<BottomNavi
         ) {
             items.forEach{section ->
                 val selected = section == currentSection
-                val tint by animateColorAsState(
-                    if (selected) {
-                        primaryTextColor
-                    } else {
-                        primaryDarkColor
-                    }
-                )
                 BottomNavigationItem(
                     icon = { Icon(section.icon,"contentDescription") },
                     label = { Text(stringResource(id = section.resourceId)) },
