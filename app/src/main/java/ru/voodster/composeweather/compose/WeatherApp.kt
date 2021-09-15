@@ -86,7 +86,6 @@ fun BottomNavigationBar(navController: NavHostController, items: List<BottomNavi
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
     val sections = remember { BottomNavigationScreens.values() }
     val routes = remember { sections.map { it.route } }
 
