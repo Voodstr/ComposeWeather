@@ -21,7 +21,6 @@ class WeatherRepository @Inject constructor(
     private var curWeather: WeatherModel = fakeWeather
 
     private val tableWeather = ArrayList<WeatherModel>()
-    private val fakeTable  = arrayListOf(fakeWeather,fakeWeather,fakeWeather)
 
     fun getCurrentWeather(callback: GetWeatherCallback){
         api.getWeather()

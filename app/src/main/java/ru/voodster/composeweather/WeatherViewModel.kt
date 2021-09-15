@@ -21,16 +21,12 @@ class WeatherViewModel : ViewModel() {
     private val currentWeatherLiveData = MutableLiveData<WeatherModel>()
     val currentWeather : LiveData<WeatherModel>
         get() = currentWeatherLiveData
-
-    var wetherNow = mutableStateOf(WeatherModel(0,0,0,0,0,0))
-        private set
-
     var isWeatherRefreshing = false
-    var isTableRefreshing = false
 
     private val tableWeatherLiveData = MutableLiveData<List<WeatherModel>>()
     val tableWeather : LiveData<List<WeatherModel>>
         get() = tableWeatherLiveData
+    var isTableRefreshing = false
 
     val errorMsg = SingleLiveEvent<String>()
 

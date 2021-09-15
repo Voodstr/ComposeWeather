@@ -5,9 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material.Scaffold
-import androidx.navigation.compose.rememberNavController
+import ru.voodster.composeweather.compose.WeatherApp
 import ru.voodster.composeweather.ui.theme.ComposeWeatherTheme
-import ru.voodster.composeweather.weatherapi.WeatherModel
 
 class MainActivity : ComponentActivity() {
     
