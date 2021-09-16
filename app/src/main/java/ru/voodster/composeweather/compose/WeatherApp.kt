@@ -47,38 +47,37 @@ private tailrec fun findStartDestination(graph: NavDestination): NavDestination 
 fun WeatherApp(
     appContainer: WeatherViewModel
 ) {
-        ProvideWindowInsets(windowInsetsAnimationsEnabled = true) { // обьявляем обработку вставок типа клавиатуры или navBar
-            val systemUiController = rememberSystemUiController() // Контроллер системного UI -
-            // теже клавиатура navBar statusBar
-            SideEffect {
-                systemUiController.isStatusBarVisible = false
-                //systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
-            }
-            val navController = rememberNavController() // Контроллер навигации
-            //val coroutineScope = rememberCoroutineScope() // Область процесса в котором живет UI
-
-            // This top level scaffold contains the app drawer, which needs to be accessible
-            // from multiple screens. An event to open the drawer is passed down to each
-            // screen that needs it.
-            val scaffoldState = rememberScaffoldState() // Состояние основного окна
-            val bottomNavigationItems = listOf(
-                BottomNavigationScreens.CURRENT,
-                BottomNavigationScreens.TABLE,
-                BottomNavigationScreens.CHART
-            )
-
-            Scaffold(
-                scaffoldState = scaffoldState,
-                bottomBar = { BottomNavigationBar(navController, bottomNavigationItems) }
-            )
-            { innerPadding ->
-                WeatherNavGraph(
-                    viewModel = appContainer,
-                    navController = navController,
-                    innerPadding = innerPadding
+    ProvideWindowInsets(windowInsetsAnimationsEnabled = true) { // обьявляем обработку вставок типа клавиатуры или navBar
+        val systemUiController = rememberSystemUiController() // Контроллер системного UI -
+        // теже клавиатура navBar statusBar
+        SideEffect {
+            systemUiController.isStatusBarVisible = false
+            //systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
+        }
+        val navController = rememberNavController() // Контроллер навигации
+        //val coroutineScope = rememberCoroutineScope() // Область процесса в котором живет UI
+        // This top level scaffold contains the app drawer, which needs to be accessible
+        // from multiple screens. An event to open the drawer is passed down to each
+        // screen that needs it.
+        val scaffoldState = rememberScaffoldState()
+        // Состояние основного окна
+        Scaffold(
+            scaffoldState = scaffoldState,
+            bottomBar = {
+                BottomNavigationBar(
+                    navController,
+                    BottomNavigationScreens.values().toList()
                 )
             }
+        )
+        { innerPadding ->
+            WeatherNavGraph(
+                viewModel = appContainer,
+                navController = navController,
+                innerPadding = innerPadding
+            )
         }
+    }
 }
 
 @Composable
@@ -107,13 +106,7 @@ fun BottomNavigationBar(navController: NavHostController, items: List<BottomNavi
                         // This if check gives us a "singleTop" behavior where we do not create a
                         // second instance of the composable if we are already on that destination
                         if (currentRoute != section.route) {
-                            navController.navigate(section.route) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(findStartDestination(navController.graph).id) {
-                                    saveState = true
-                                }
-                            }
+                            navController.navigate(section.route)
                         }
                     }
                 )
@@ -123,21 +116,20 @@ fun BottomNavigationBar(navController: NavHostController, items: List<BottomNavi
 
 }
 
-
 enum class BottomNavigationScreens(
     val route: String,
     @StringRes val resourceId: Int,
     val icon: ImageVector
 ) {
-    CURRENT(MainDestinations.HOME_ROUTE, R.string.Indication, Icons.Filled.Home),
-    TABLE(MainDestinations.TABLE_ROUTE, R.string.Table, Icons.Filled.List),
-    CHART(MainDestinations.CHART_ROUTE, R.string.Chart, Icons.Filled.DateRange)
+    CURRENT("home/current", R.string.Indication, Icons.Filled.Home),
+    TABLE("home/table", R.string.Table, Icons.Filled.List),
+    CHART("home/chart", R.string.Chart, Icons.Filled.DateRange)
 }
 
 @Preview("WeatherApp")
-@Preview("WeatherApp. Big font",fontScale = 1.3f)
-@Preview("WeatherApp. Small font",fontScale = 0.8f)
-@Preview("WeatherApp. Dark Theme",uiMode = UI_MODE_NIGHT_YES )
+@Preview("WeatherApp. Big font", fontScale = 1.3f)
+@Preview("WeatherApp. Small font", fontScale = 0.8f)
+@Preview("WeatherApp. Dark Theme", uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun WeatherAppPreview() {
     ComposeWeatherTheme {

@@ -9,6 +9,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.async
 import ru.voodster.composeweather.ui.theme.ComposeWeatherTheme
 
 @Composable
@@ -29,6 +31,7 @@ fun PolygonChart(
     modifier: Modifier,
     labelFontSize: TextUnit
 ) {
+    val scope = rememberCoroutineScope()
     val cornerOffset = 10.dp
     val surfaceColor = MaterialTheme.colors.surface
     Surface(
@@ -116,6 +119,14 @@ fun Drawing(xList: List<Float>, yList: List<Float>, modifier: Modifier) {
 }
 
 
+/**
+ * Points
+ * autoResizable
+ * @param xList X Values (width)
+ * @param yList  Y values (height)
+ * @param rectSize CanvasSize
+ * @return
+ */
 fun points(
     xList: List<Float>,
     yList: List<Float>,
@@ -126,8 +137,24 @@ fun points(
         val yMax = yList.maxOrNull() ?: 100.0f
         val ySize = yMax - (yList.minOrNull() ?: -100.0f)
         val xSize = xMax - (xList.minOrNull() ?: -100.0f)
-        val xScale = rectSize.width.div(xSize)
-        val yScale = rectSize.height.div(ySize)
+        MutableList(xList.size) {
+            Offset(
+                x = xMax.minus(xList[it]).times(rectSize.width.div(xSize)),
+                y = yMax.minus(yList.reversed()[it]).times(rectSize.height.div(ySize))
+            )
+        }
+    } else null
+}
+
+fun points(
+    xList: List<Float>,
+    yList: List<Float>,
+    xScale:Float,
+    yScale:Float
+): List<Offset>? {
+    return if (xList.size == yList.size) {
+        val xMax = xList.maxOrNull() ?: 100.0f
+        val yMax = yList.maxOrNull() ?: 100.0f
         MutableList(xList.size) {
             Offset(
                 x = xMax.minus(xList[it]).times(xScale),
@@ -136,6 +163,9 @@ fun points(
         }
     } else null
 }
+
+
+
 
 
 @Preview("Chart")

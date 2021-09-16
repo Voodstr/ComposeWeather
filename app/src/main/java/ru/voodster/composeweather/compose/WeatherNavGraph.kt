@@ -13,11 +13,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.voodster.composeweather.WeatherViewModel
 
-object MainDestinations {
-    const val HOME_ROUTE = "home/current"
-    const val TABLE_ROUTE = "home/table"
-    const val CHART_ROUTE = "home/chart"
-}
 
 
 @Composable
@@ -25,7 +20,7 @@ fun WeatherNavGraph(
     innerPadding: PaddingValues,
     viewModel: WeatherViewModel,
     navController: NavHostController = rememberNavController(), // контроллер навигации // состояние экрана
-    startDestination: String = MainDestinations.HOME_ROUTE // начальная точка UI
+    startDestination: String = BottomNavigationScreens.CURRENT.route // начальная точка UI
 ) {
 
     NavHost(                   // navHost -- сама вьюшка, в которой меняются окна и есть все тулбары
@@ -33,13 +28,13 @@ fun WeatherNavGraph(
         startDestination = startDestination,
         modifier = Modifier.padding(innerPadding) // отступ для bottomNavigationBar
     ) {
-        composable(MainDestinations.HOME_ROUTE) { // что выдавать в при переходе на домашнюю страницу
+        composable(BottomNavigationScreens.CURRENT.route ) { // что выдавать в при переходе на домашнюю страницу
             WeatherScreen(viewModel = viewModel)
         }// таких штук можно добавить сколько угодно (не забуду добавить им названия 'MainDestinations')
-        composable(MainDestinations.TABLE_ROUTE) { // что выдавать в при переходе на домашнюю страницу
+        composable(BottomNavigationScreens.TABLE.route ) { // что выдавать в при переходе на домашнюю страницу
             TableScreen(viewModel = viewModel)
         }
-        composable(MainDestinations.CHART_ROUTE) { // что выдавать в при переходе на домашнюю страницу
+        composable(BottomNavigationScreens.CHART.route ) { // что выдавать в при переходе на домашнюю страницу
             Scaffold {
                 Box(
                     contentAlignment = Alignment.Center,
