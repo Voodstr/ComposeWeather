@@ -1,12 +1,8 @@
 package ru.voodster.composeweather.compose
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,16 +31,7 @@ fun WeatherNavGraph(
             TableScreen(viewModel = viewModel)
         }
         composable(BottomNavigationScreens.CHART.route ) { // что выдавать в при переходе на домашнюю страницу
-            Scaffold {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                ) {
-                    Text(text = "Chart", fontSize = 50.sp)
-                }
-            }
+            ChartScreen(viewModel = viewModel)
         }
     }
 }

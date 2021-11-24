@@ -1,5 +1,6 @@
 package ru.voodster.composeweather.compose
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -16,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.voodster.composeweather.WeatherViewModel
 import ru.voodster.composeweather.ui.theme.ComposeWeatherTheme
+import ru.voodster.composeweather.ui.theme.shadowColor
 import ru.voodster.composeweather.weatherapi.WeatherModel
 
 
@@ -53,13 +56,14 @@ fun CurrentWeather(data: WeatherModel) {
 @Composable
 fun TextOnSurface(text: String, textSize: TextUnit) {
     Surface(
-        shape = RoundedCornerShape(5.dp),
-        elevation = 8.dp
+        shape = RoundedCornerShape(10.dp),
+        elevation = 8.dp,
     ) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.Center),
+
             textAlign = TextAlign.Center,
             fontSize = textSize,
             text = text

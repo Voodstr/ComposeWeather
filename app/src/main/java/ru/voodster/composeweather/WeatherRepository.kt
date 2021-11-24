@@ -33,7 +33,7 @@ class WeatherRepository @Inject constructor(
     }
 
     fun getTableWeather(callback: GetTableWeatherCallback) {
-        api.getTableData(300)
+        api.getTableData(1000)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ r ->
@@ -53,7 +53,7 @@ class WeatherRepository @Inject constructor(
     }
 
     interface GetTableWeatherCallback {
-        fun onSuccess(result: List<WeatherModel>)
+        fun onSuccess(result: ArrayList<WeatherModel>)
         fun onError(error: String?)
     }
 }

@@ -22,3 +22,5 @@ val dark_secondaryColor = Color(0xFF197387)
 val dark_secondaryLightColor = Color(0xFF54a2b7)
 val dark_secondaryDarkColor = Color(0xFF00475a)
 val dark_secondaryTextColor = Color(0xFFffffff)
+
+val shadowColor = Color(0x8F000000)

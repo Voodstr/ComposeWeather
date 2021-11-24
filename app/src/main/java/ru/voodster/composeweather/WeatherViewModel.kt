@@ -20,8 +20,8 @@ class WeatherViewModel : ViewModel() {
         get() = currentWeatherLiveData
     var isWeatherRefreshing = false
 
-    private val tableWeatherLiveData = MutableLiveData<List<WeatherModel>>()
-    val tableWeather: LiveData<List<WeatherModel>>
+    private val tableWeatherLiveData = MutableLiveData<ArrayList<WeatherModel>>()
+    val tableWeather: LiveData<ArrayList<WeatherModel>>
         get() = tableWeatherLiveData
     var isTableRefreshing = false
 
@@ -46,7 +46,7 @@ class WeatherViewModel : ViewModel() {
     fun getTableWeather() {
         isTableRefreshing = true
         weatherRepository.getTableWeather(object : WeatherRepository.GetTableWeatherCallback {
-            override fun onSuccess(result: List<WeatherModel>) {
+            override fun onSuccess(result: ArrayList<WeatherModel>) {
                 tableWeatherLiveData.postValue(result)
                 isTableRefreshing = false
             }

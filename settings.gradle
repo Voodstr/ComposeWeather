@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "ComposeWeather"
 include ':app'
+include ':CoChart'
