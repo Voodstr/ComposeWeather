@@ -20,3 +20,5 @@ Weather application based on self made Arduino weather station with Raspberry Pi
 
 <img src="Screenshots/table.png" width="300">
 
+3. ChartView
+<img src="Screenshots/chart.png" width="300">
